@@ -60,7 +60,7 @@ class Plugin extends PluginBase
     public function registerFormWidgets()
     {
         return [
-            'OctoDevel\OctoMail\FormWidgets\Trumbowyg' => [
+            'OctoDevel\OctoCase\FormWidgets\Trumbowyg' => [
                 'label' => 'Trumbowyg',
                 'alias' => 'trumbowyg'
             ]
