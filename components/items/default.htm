@@ -1,21 +1,21 @@
 <ul class="item-list">
     {% for item in items %}
         <li>
-            <h3><a href="{{ itemPage|page({'slug': item.slug}) }}">{{ item.title }}</a></h3>
+            <h3><a href="{{ itemPage|page({ (itemPageIdParam): item.slug}) }}">{{ item.title }}</a></h3>
 
             <p class="info">
-                Published
+                Posted
                 {% if item.categories.count %} in {% endif %}
                 {% for category in item.categories %}
-                    <a href="{{ categoryPage|page({'slug': category.slug}) }}">{{ category.name }}</a>{% if not loop.last %}, {% endif %}
+                    <a href="{{ categoryPage|page({ (categoryPageIdParam): category.slug}) }}">{{ category.name }}</a>{% if not loop.last %}, {% endif %}
                 {% endfor %}
-                on {{ item.publshed_at|date('M d, Y') }}
+                on {{ item.published_at|date('M d, Y') }}
             </p>
 
             {% if item.excerpt %}
-                {{ item.excerpt }}
+                <p class="excerpt">{{ item.excerpt }}</p>
             {% else %}
-                {{ item.content_html|raw }}
+                <div class="content">{{ item.content|raw }}</div>
             {% endif %}
         </li>
     {% else %}
@@ -26,17 +26,17 @@
 {% if items.getLastPage > 1 %}
     <ul class="pagination">
         {% if items.getCurrentPage > 1 %}
-            <li><a href="{{ this.page.baseFileName|page({ page: (items.getCurrentPage-1) }) }}">&larr; Prev</a></li>
+            <li><a href="{{ this.page.baseFileName|page({ (pageParam): (items.getCurrentPage-1) }) }}">&larr; Prev</a></li>
         {% endif %}
 
         {% for page in 1..items.getLastPage %}
             <li class="{{ items.getCurrentPage == page ? 'active' : null }}">
-                <a href="{{ this.page.baseFileName|page({ page: page }) }}">{{ page }}</a>
+                <a href="{{ this.page.baseFileName|page({ (pageParam): page }) }}">{{ page }}</a>
             </li>
         {% endfor %}
 
         {% if items.getLastPage > items.getCurrentPage %}
-            <li><a href="{{ this.page.baseFileName|page({ page: (items.getCurrentPage+1) }) }}">Next &rarr;</a></li>
+            <li><a href="{{ this.page.baseFileName|page({ (pageParam): (items.getCurrentPage+1) }) }}">Next &rarr;</a></li>
         {% endif %}
     </ul>
 {% endif %}

@@ -1,10 +1,10 @@
-{{ octocaseItem.content_html|raw }}
+<div class="content">{{ item.content|raw }}</div>
 
 <p class="info">
-    Published
-    {% if octocaseItem.categories.count %} in {% endif %}
-    {% for category in octocaseItem.categories %}
+    Posted
+    {% if item.categories.count %} in {% endif %}
+    {% for category in item.categories %}
         <a href="{{ categoryPage|page({'slug': category.slug}) }}">{{ category.name }}</a>{% if not loop.last %}, {% endif %}
     {% endfor %}
-    on {{ octocaseItem.published_at|date('M d, Y') }}
+    on {{ item.published_at|date('M d, Y') }}
 </p>

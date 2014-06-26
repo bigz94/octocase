@@ -11,30 +11,30 @@ class Item extends ComponentBase
     {
         return [
             'name'        => 'OctoCase Item',
-            'description' => 'Displays a octocase item on the page.'
+            'description' => 'Displays a blog item on the page.'
         ];
     }
 
     public function defineProperties()
     {
         return [
-            'paramId' => [
-                'description' => 'The URL route parameter used for looking up the item by its slug.',
+            'idParam' => [
                 'title'       => 'Slug param name',
-                'default'     => 'slug',
+                'description' => 'The URL route parameter used for looking up the item by its slug.',
+                'default'     => ':slug',
                 'type'        => 'string'
-            ]
+            ],
         ];
     }
 
     public function onRun()
     {
-        $this->item = $this->page['octocaseItem'] = $this->loadItem();
+        $this->item = $this->page['item'] = $this->loadItem();
     }
 
     protected function loadItem()
     {
-        $slug = $this->param($this->property('paramId'));
+        $slug = $this->propertyOrParam('idParam');
         return OctoCaseItem::isPublished()->where('slug', '=', $slug)->first();
     }
 }

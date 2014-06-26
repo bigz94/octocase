@@ -1,24 +1,29 @@
 <?php namespace OctoDevel\OctoCase\Components;
 
-use Cms\Classes\ComponentBase;
-use Cms\Classes\CmsPropertyHelper;
-use OctoDevel\OctoCase\Models\Item as OctoCaseItem;
+use App;
 use Request;
 use Redirect;
-use App;
+use Cms\Classes\Page;
+use Cms\Classes\ComponentBase;
+use OctoDevel\OctoCase\Models\Item as OctoCaseItem;
+use OctoDevel\OctoCase\Models\Category as OctoCaseCategory;
 
 class Items extends ComponentBase
 {
     public $items;
-    public $categoryPage;
     public $itemPage;
+    public $pageParam;
+    public $category;
+    public $categoryPage;
     public $noItemsMessage;
+    public $itemPageIdParam;
+    public $categoryPageIdParam;
 
     public function componentDetails()
     {
         return [
             'name'        => 'OctoCase Item List',
-            'description' => 'Displays a list of latest octocase items on the page.'
+            'description' => 'Displays a list of latest blog items on the page.'
         ];
     }
 
@@ -26,61 +31,113 @@ class Items extends ComponentBase
     {
         return [
             'itemsPerPage' => [
-                'title' => 'Items per page',
-                'default' => '10',
-                'type'=>'string',
-                'validationPattern'=>'^[0-9]+$',
-                'validationMessage'=>'Invalid format of the items per page value'
+                'title'             => 'Items per page',
+                'type'              => 'string',
+                'validationPattern' => '^[0-9]+$',
+                'validationMessage' => 'Invalid format of the items per page value',
+                'default'           => '10',
+            ],
+            'pageParam' => [
+                'title'       => 'Pagination parameter name',
+                'description' => 'The expected parameter name used by the pagination pages.',
+                'type'        => 'string',
+                'default'     => ':page',
+            ],
+            'categoryFilter' => [
+                'title'       => 'Category filter',
+                'description' => 'Enter a category slug or URL parameter to filter the items by. Leave empty to show all items.',
+                'type'        => 'string',
+                'default'     => ''
             ],
             'categoryPage' => [
-                'title' => 'Category page',
-                'description' => 'Name of the category page file for the "Published into" category links. This property is used by the default component partial.',
-                'type'=>'dropdown',
-                'default' => 'octocase/category'
+                'title'       => 'Category page',
+                'description' => 'Name of the category page file for the "Itemed into" category links. This property is used by the default component partial.',
+                'type'        => 'dropdown',
+                'default'     => 'octocase/category'
+            ],
+            'categoryPageIdParam' => [
+                'title'       => 'Category page param name',
+                'description' => 'The expected parameter name used when creating links to the category page.',
+                'type'        => 'string',
+                'default'     => ':page',
             ],
             'itemPage' => [
-                'title' => 'Item page',
-                'description' => 'Name of the octocase item page file for the "Learn more" links. This property is used by the default component partial.',
-                'type'=>'dropdown',
-                'default' => 'octocase/item'
+                'title'       => 'Item page',
+                'description' => 'Name of the blog item page file for the "Learn more" links. This property is used by the default component partial.',
+                'type'        => 'dropdown',
+                'default'     => 'octocase/item'
+            ],
+            'itemPageIdParam' => [
+                'title'       => 'Item page param name',
+                'description' => 'The expected parameter name used when creating links to the item page.',
+                'type'        => 'string',
+                'default'     => ':page',
             ],
             'noItemsMessage' => [
-                'title' => 'No items message',
-                'description' => 'Message to display in the octocase item list in case if there are no items. This property is used by the default component partial.',
-                'type'=>'string',
-                'default' => 'No items found'
-            ]
+                'title'        => 'No items message',
+                'description'  => 'Message to display in the blog item list in case if there are no items. This property is used by the default component partial.',
+                'type'         => 'string',
+                'default'      => 'No items found'
+            ],
         ];
     }
 
     public function getCategoryPageOptions()
     {
-        return CmsPropertyHelper::listPages();
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
     public function getItemPageOptions()
     {
-        return CmsPropertyHelper::listPages();
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
     public function onRun()
     {
-        $this->items = $this->page['items'] = $this->loadItems();
+        $this->category = $this->page['category'] = $this->loadCategory();
+        $this->items = $this->page['items'] = $this->listItems();
 
-        $currentPage = $this->param('page');
+        $currentPage = $this->propertyOrParam('pageParam');
         if ($currentPage > ($lastPage = $this->items->getLastPage()) && $currentPage > 1)
-            return Redirect::to($this->controller->currentPageUrl(['page'=>$lastPage]));
+            return Redirect::to($this->controller->currentPageUrl([$this->property('pageParam') => $lastPage]));
 
-        $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
-        $this->itemPage = $this->page['itemPage'] = $this->property('itemPage');
-        $this->noItemsMessage = $this->page['noItemsMessage'] = $this->property('noItemsMessage');
+        $this->prepareVars();
     }
 
-    protected function loadItems()
+    protected function prepareVars()
     {
-        $currentPage = $this->param('page');
-        App::make('paginator')->setCurrentPage($currentPage);
+        $this->pageParam = $this->page['pageParam'] = $this->property('pageParam');
+        $this->noItemsMessage = $this->page['noItemsMessage'] = $this->property('noItemsMessage');
 
-        return OctoCaseItem::isPublished()->orderBy('published_at', 'desc')->paginate($this->property('itemsPerPage'));
+        /*
+         * Page links
+         */
+        $this->itemPage = $this->page['itemPage'] = $this->property('itemPage');
+        $this->itemPageIdParam = $this->page['itemPageIdParam'] = $this->property('itemPageIdParam');
+        $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
+        $this->categoryPageIdParam = $this->page['categoryPageIdParam'] = $this->property('categoryPageIdParam');
+    }
+
+    protected function listItems()
+    {
+        $categories = $this->category ? $this->category->id : null;
+
+        return OctoCaseItem::make()->listFrontEnd([
+            'page'       => $this->propertyOrParam('pageParam'),
+            'sort'       => ['published_at', 'updated_at'],
+            'perPage'    => $this->property('itemsPerPage'),
+            'categories' => $categories
+        ]);
+    }
+
+    public function loadCategory()
+    {
+        if (!$categoryId = $this->propertyOrParam('categoryFilter'))
+            return null;
+
+        if (!$category = OctoCaseCategory::whereSlug($categoryId)->first())
+            return null;
+
+        return $category;
     }
 }

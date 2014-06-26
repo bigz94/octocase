@@ -1,10 +1,10 @@
 <?php namespace OctoDevel\OctoCase\Models;
 
+use App;
 use Str;
 use Model;
 use October\Rain\Support\Markdown;
 use October\Rain\Support\ValidationException;
-use OctoDevel\OctoCase\Classes\TagProcessor;
 
 class Item extends Model
 {
@@ -15,7 +15,7 @@ class Item extends Model
      */
     public $rules = [
         'title' => 'required',
-        'slug' => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i'],
+        'slug' => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:octodevel_octocase_items'],
         'content' => 'required',
         'excerpt' => ''
     ];
@@ -35,18 +35,67 @@ class Item extends Model
         'images' => ['System\Models\File', 'order' => 'sort_order'],
     ];
 
-    public $preview = null;
-
-    public static function formatHtml($input, $preview = false)
+    /**
+     * Lists items for the front end
+     * @param  array $options Display options
+     * @return self
+     */
+    public function listFrontEnd($options)
     {
-        $result = Markdown::parse(trim($input));
+        /*
+         * Default options
+         */
+        extract(array_merge([
+            'page' => 1,
+            'perPage' => 30,
+            'sort' => 'created_at',
+            'categories' => null,
+            'search' => '',
+            'published' => true
+        ], $options));
 
-        if ($preview)
-            $result = str_replace('<pre>', '<pre class="prettyprint">', $result);
+        $allowedSortingOptions = ['created_at', 'updated_at', 'published_at'];
+        $searchableFields = ['title', 'slug', 'excerpt', 'content'];
 
-        $result = TagProcessor::instance()->processTags($result, $preview);
+        App::make('paginator')->setCurrentPage($page);
+        $obj = $this->newQuery();
 
-        return $result;
+        if ($published)
+            $obj->isPublished();
+
+        /*
+         * Sorting
+         */
+        if (!is_array($sort)) $sort = [$sort];
+        foreach ($sort as $_sort) {
+
+            $parts = explode(' ', $_sort);
+            if (count($parts) < 2) array_push($parts, 'desc');
+            list($sortField, $sortDirection) = $parts;
+
+            if (in_array($sortField, $allowedSortingOptions))
+                $obj->orderBy($_sort, 'desc');
+        }
+
+        /*
+         * Search
+         */
+        $search = trim($search);
+        if (strlen($search)) {
+            $obj->searchWhere($search, $searchableFields);
+        }
+
+        /*
+         * Categories
+         */
+        if ($categories !== null) {
+            if (!is_array($categories)) $categories = [$categories];
+            $obj->whereHas('categories', function($q) use ($categories) {
+                $q->whereIn('id', $categories);
+            });
+        }
+
+        return $obj->paginate($perPage);
     }
 
     public function afterValidate()
@@ -67,30 +116,31 @@ class Item extends Model
 
     public function beforeCreate()
     {
-	if($this->published_at)
-	{
-	    $timestamp = strtotime($this->published_at);
-	    $this->published_at = date('Y-m-d', $timestamp) . ' ' . date('H:i:s');
-	}
+        if($this->published_at)
+        {
+            $timestamp = strtotime($this->published_at);
+            $this->published_at = date('Y-m-d', $timestamp) . ' ' . date('H:i:s');
+        }
     }
 
     public function beforeUpdate()
     {
-	// Original date
-	$original = $this->original;
-	$org_timestamp = strtotime($original['published_at']);
-	$org_published_at = date('Y-m-d', $org_timestamp);
-	// current date
-	$timestamp = strtotime($this->published_at);
-	$published_at = date('Y-m-d', $timestamp);
+        // Original date
+        $original = $this->original;
+        $org_timestamp = strtotime($original['published_at']);
+        $org_published_at = date('Y-m-d', $org_timestamp);
 
-	if($published_at != $org_published_at)
-	{
-	    $this->published_at = $published_at . ' ' . date('H:i:s');
-	}
-	else
-	{
-	    $this->published_at = date('Y-m-d H:i:s', $org_timestamp);
-	}
+        // current date
+        $timestamp = strtotime($this->published_at);
+        $published_at = date('Y-m-d', $timestamp);
+
+        if($published_at != $org_published_at)
+        {
+            $this->published_at = $published_at . ' ' . date('H:i:s');
+        }
+        else
+        {
+            $this->published_at = date('Y-m-d H:i:s', $org_timestamp);
+        }
     }
 }

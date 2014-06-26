@@ -58,8 +58,7 @@ secondaryTabs:
       span: left
       type: datepicker
       cssClass: checkbox-align
-      options:
-        mode: date
+      mode: date
 
     excerpt:
       tab: Manage
@@ -71,7 +70,6 @@ secondaryTabs:
       tab: Manage
       label: Images
       type: fileupload
-      options:
-        mode: image
-        image-width: 100
-        image-height: 100
+      mode: image
+      image-width: 100
+      image-height: 100

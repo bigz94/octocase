@@ -3,7 +3,6 @@
 use Backend;
 use Controller;
 use System\Classes\PluginBase;
-use OctoDevel\OctoCase\Classes\TagProcessor;
 
 class Plugin extends PluginBase
 {
@@ -13,7 +12,7 @@ class Plugin extends PluginBase
         return [
             'name'        => 'Octo Case',
             'description' => 'Provides a octocase plugin, can be used to show products, services or until like a photos gallery.',
-            'author'      => 'Fabricio Pereira Rabelo',
+            'author'      => 'Octo Devel',
             'icon'        => 'icon-cubes'
         ];
     }
@@ -24,7 +23,6 @@ class Plugin extends PluginBase
             'OctoDevel\OctoCase\Components\Item' => 'octocaseItem',
             'OctoDevel\OctoCase\Components\Items' => 'octocaseItems',
             'OctoDevel\OctoCase\Components\Categories' => 'octocaseCategories',
-            'OctoDevel\OctoCase\Components\Category' => 'octocaseCategory'
         ];
     }
 
@@ -41,13 +39,13 @@ class Plugin extends PluginBase
                 'sideMenu' => [
                     'items' => [
                         'label'       => 'Items',
-                        'icon'        => 'icon-file-text-o',
+                        'icon'        => 'icon-th-large',
                         'url'         => Backend::url('octodevel/octocase/items'),
                         'permissions' => ['octocase.access_items'],
                     ],
                     'categories' => [
                         'label'       => 'Categories',
-                        'icon'        => 'icon-list',
+                        'icon'        => 'icon-list-ul',
                         'url'         => Backend::url('octodevel/octocase/categories'),
                         'permissions' => ['octocase.access_categories'],
                     ],
