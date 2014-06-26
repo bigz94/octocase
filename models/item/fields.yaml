@@ -43,7 +43,7 @@ secondaryTabs:
     categories:
       tab: Categories
       type: relation
-      commentAbove: Select categories the octocase item belongs to
+      commentAbove: Select categories the OctoCase Item belongs to
       placeholder: There are no categories, you should create one first!
 
     published:
