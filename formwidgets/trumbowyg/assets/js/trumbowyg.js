@@ -16,21 +16,23 @@
     // ===============
     $(document).render(function () {
 
-    	var slug;
-    	if($('#Form-form-field-Item-slug').val()){
-    		slug = $('#Form-form-field-Item-slug').val();
-    	}else{
-    		slug = $('.nav.nav-tabs li.active:first a').attr('title');
-    	}
+        var slug;
+        if($('#Form-field-Item-slug').val()){
+            slug = $('#Form-field-Item-slug').val();
+        }else{
+            slug = $('.nav.nav-tabs li.active:first a').attr('title');
+        }
 
-    	$.extend(true, $.trumbowyg, {
+        $.extend(true, $.trumbowyg, {
                 upload: {
-		            serverPath: '/octodevel/octocase/upload/' + slug + '/'
-		        }
+                    serverPath: window.location.href.toString().split(window.location.host)[0] +
+                                window.location.host.toString() +
+                                '/octodevel/octocase/upload/' + slug.toLowerCase() + '/'
+                }
             });
         $('[data-control="trumbowyg"] textarea').trumbowyg({
-        		fixedBtnPane: true,
-         		autogrow: true,
+                fixedBtnPane: true,
+                autogrow: true,
                 btnsDef: {
                     // Customizables dropdowns
                     align: {
@@ -45,9 +47,9 @@
                 btns: ['viewHTML',
                 '|', 'formatting',
                 '|', 'bold',
-                 	 'italic',
-                 	 'underline',
-                 	 'strikethrough',
+                     'italic',
+                     'underline',
+                     'strikethrough',
                 '|', 'link',
                 '|', 'image',
                 '|', $.trumbowyg.btnsGrps.justify,

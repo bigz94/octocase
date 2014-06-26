@@ -27,13 +27,6 @@ class Item extends Model
      */
     protected $dates = ['published_at'];
 
-    /*
-     * Relations
-     */
-    public $belongsTo = [
-        'user' => ['Backend\Models\User']
-    ];
-
     public $belongsToMany = [
         'categories' => ['OctoDevel\OctoCase\Models\Category', 'table' => 'octodevel_octocase_items_categories', 'order' => 'name']
     ];

@@ -11,10 +11,10 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'OctoCase',
+            'name'        => 'Octo Case',
             'description' => 'Provides a octocase plugin, can be used to show products, services or until like a photos gallery.',
             'author'      => 'Fabricio Pereira Rabelo',
-            'icon'        => 'icon-image'
+            'icon'        => 'icon-cubes'
         ];
     }
 
@@ -34,7 +34,7 @@ class Plugin extends PluginBase
             'octocase' => [
                 'label'       => 'Octo Case',
                 'url'         => Backend::url('octodevel/octocase/items'),
-                'icon'        => 'icon-image',
+                'icon'        => 'icon-cubes',
                 'permissions' => ['octocase.*'],
                 'order'       => 500,
 
@@ -67,29 +67,4 @@ class Plugin extends PluginBase
         ];
     }
 
-    /**
-     * Register method, called when the plugin is first registered.
-     */
-    public function register()
-    {
-        /*
-         * Register the image tag processing callback
-         */
-
-        TagProcessor::instance()->registerCallback(function($input, $preview){
-            if (!$preview)
-                return $input;
-
-            return preg_replace('|\<img alt="([0-9]+)" src="image"([^>]*)\/>|m',
-                '<span class="image-placeholder" data-index="$1">
-                    <span class="dropzone">
-                        <span class="label">Click or drop an image...</span>
-                        <span class="indicator"></span>
-                    </span>
-                    <input type="file" class="file" name="image[$1]"/>
-                    <input type="file" class="trigger"/>
-                </span>',
-            $input);
-        });
-    }
 }
