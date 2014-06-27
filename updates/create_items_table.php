@@ -15,11 +15,11 @@ class CreateItemsTable extends Migration
             {
                 $table->engine = 'InnoDB';
                 $table->increments('id');
-                $table->integer('user_id')->unsigned()->nullable()->index();
                 $table->string('title')->nullable();
                 $table->string('slug')->index();
                 $table->text('excerpt')->nullable();
                 $table->text('content')->nullable();
+                $table->text('content_text')->nullable();
                 $table->timestamp('published_at')->nullable();
                 $table->boolean('published')->default(false);
                 $table->timestamps();

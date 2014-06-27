@@ -15,7 +15,7 @@
             {% if item.excerpt %}
                 <p class="excerpt">{{ item.excerpt }}</p>
             {% else %}
-                <div class="content">{{ item.content|raw }}</div>
+                <div class="content">{{ item.content_text|raw }}</div>
             {% endif %}
         </li>
     {% else %}

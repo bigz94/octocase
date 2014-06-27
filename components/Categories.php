@@ -41,7 +41,7 @@ class Categories extends ComponentBase
                 'title'       => 'Category page param name',
                 'description' => 'The expected parameter name used when creating links to the category page.',
                 'type'        => 'string',
-                'default'     => ':page',
+                'default'     => ':slug',
             ],
             'displayEmpty' => [
                 'title'       => 'Display empty categories',
@@ -75,7 +75,7 @@ class Categories extends ComponentBase
                 ->join('octodevel_octocase_items', 'octodevel_octocase_items.id', '=', 'octodevel_octocase_items_categories.item_id')
                 ->whereNotNull('octodevel_octocase_items.published')
                 ->where('octodevel_octocase_items.published', '=', 1)
-                ->whereRaw('rainlab_octocase_categories.id = octodevel_octocase_items_categories.category_id');
+                ->whereRaw('octodevel_octocase_categories.id = octodevel_octocase_items_categories.category_id');
             });
         }
 

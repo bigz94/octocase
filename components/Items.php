@@ -47,11 +47,11 @@ class Items extends ComponentBase
                 'title'       => 'Category filter',
                 'description' => 'Enter a category slug or URL parameter to filter the items by. Leave empty to show all items.',
                 'type'        => 'string',
-                'default'     => ''
+                'default'     => ':slug'
             ],
             'categoryPage' => [
                 'title'       => 'Category page',
-                'description' => 'Name of the category page file for the "Itemed into" category links. This property is used by the default component partial.',
+                'description' => 'Name of the category page file for the "Posted into" category links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
                 'default'     => 'octocase/category'
             ],
@@ -59,7 +59,7 @@ class Items extends ComponentBase
                 'title'       => 'Category page param name',
                 'description' => 'The expected parameter name used when creating links to the category page.',
                 'type'        => 'string',
-                'default'     => ':page',
+                'default'     => ':slug',
             ],
             'itemPage' => [
                 'title'       => 'Item page',
@@ -71,7 +71,7 @@ class Items extends ComponentBase
                 'title'       => 'Item page param name',
                 'description' => 'The expected parameter name used when creating links to the item page.',
                 'type'        => 'string',
-                'default'     => ':page',
+                'default'     => ':slug',
             ],
             'noItemsMessage' => [
                 'title'        => 'No items message',
