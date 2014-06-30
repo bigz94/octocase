@@ -2,9 +2,9 @@
 
 Create a products/services showcase or a sample photo gallery.
 
-## Implementing front-end pages
+## How do this work
 
-The plugin provides several components for building the octocase item list page (archive), category page, item details page and category list for the sidebar.
+The plugin provides several components for building the octocase item list page, category page, item details page and category list for the sidebar.
 
 ### Item list page
 
