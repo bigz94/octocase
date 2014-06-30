@@ -11,7 +11,7 @@ class Plugin extends PluginBase
     {
         return [
             'name'        => 'Octo Case',
-            'description' => 'Provides a octocase plugin, can be used to show products, services or until like a photos gallery.',
+            'description' => 'Create a products/services showcase or a sample photo gallery.',
             'author'      => 'Octo Devel',
             'icon'        => 'icon-cubes'
         ];

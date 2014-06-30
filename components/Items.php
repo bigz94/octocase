@@ -23,7 +23,7 @@ class Items extends ComponentBase
     {
         return [
             'name'        => 'OctoCase Item List',
-            'description' => 'Displays a list of latest blog items on the page.'
+            'description' => 'Displays a list of latest octocase items on the page.'
         ];
     }
 
@@ -63,7 +63,7 @@ class Items extends ComponentBase
             ],
             'itemPage' => [
                 'title'       => 'Item page',
-                'description' => 'Name of the blog item page file for the "Learn more" links. This property is used by the default component partial.',
+                'description' => 'Name of the octocase item page file for the "Learn more" links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
                 'default'     => 'octocase/item'
             ],
@@ -75,7 +75,7 @@ class Items extends ComponentBase
             ],
             'noItemsMessage' => [
                 'title'        => 'No items message',
-                'description'  => 'Message to display in the blog item list in case if there are no items. This property is used by the default component partial.',
+                'description'  => 'Message to display in the octocase item list in case if there are no items. This property is used by the default component partial.',
                 'type'         => 'string',
                 'default'      => 'No items found'
             ],

@@ -10,8 +10,8 @@ class Item extends ComponentBase
     public function componentDetails()
     {
         return [
-            'name'        => 'OctoCase Item',
-            'description' => 'Displays a blog item on the page.'
+            'name'        => 'OctoCase Single Item',
+            'description' => 'Displays an octocase item on the page.'
         ];
     }
 

@@ -16,12 +16,12 @@ columns:
 
   created_at:
     label: Created
-    type: date
+    type: datetime
 
   updated_at:
     label: Updated
-    type: date
+    type: datetime
 
   published_at:
     label: Published
-    type: date
+    type: datetime

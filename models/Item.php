@@ -16,7 +16,7 @@ class Item extends Model
     public $rules = [
         'title' => 'required',
         'slug' => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:octodevel_octocase_items'],
-        'content' => 'required',
+        'content' => '',
         'excerpt' => ''
     ];
 
@@ -117,37 +117,14 @@ class Item extends Model
     public function beforeCreate()
     {
         // Update content text
-        $this->content_text = strip_tags($this->content);
-
-        // Set current date
-        if($this->published_at)
-        {
-            $timestamp = strtotime($this->published_at);
-            $this->published_at = date('Y-m-d', $timestamp) . ' ' . date('H:i:s');
-        }
+        $content = str_replace(array('<br>', '<br/>', '<br />', '</p>'), ' ', $this->content);
+        $this->content_text = strip_tags($content);
     }
 
     public function beforeUpdate()
     {
         // Update content text
-        $this->content_text = strip_tags($this->content);
-
-        // Original date
-        $original = $this->original;
-        $org_timestamp = strtotime($original['published_at']);
-        $org_published_at = date('Y-m-d', $org_timestamp);
-
-        // Set current date
-        $timestamp = strtotime($this->published_at);
-        $published_at = date('Y-m-d', $timestamp);
-
-        if($published_at != $org_published_at)
-        {
-            $this->published_at = $published_at . ' ' . date('H:i:s');
-        }
-        else
-        {
-            $this->published_at = date('Y-m-d H:i:s', $org_timestamp);
-        }
+        $content = str_replace(array('<br>', '<br/>', '<br />', '</p>'), ' ', $this->content);
+        $this->content_text = strip_tags($content);
     }
 }

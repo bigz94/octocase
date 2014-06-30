@@ -58,11 +58,11 @@ secondaryTabs:
       span: left
       type: datepicker
       cssClass: checkbox-align
-      mode: date
+      mode: datetime
 
     excerpt:
       tab: Manage
-      label: Excerpt
+      label: Resume
       type: textarea
       size: small
 

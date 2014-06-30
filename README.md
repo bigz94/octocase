@@ -1,15 +1,16 @@
 # OctoCase Plugin
 
-Provides a octocase plugin, can be used to show products, services or until like a photos gallery.
+Create a products/services showcase or a sample photo gallery.
 
 ## Implementing front-end pages
 
-The plugin provides several components for building the item list page (archive), category page, item details page and category list for the sidebar.
+The plugin provides several components for building the octocase item list page (archive), category page, item details page and category list for the sidebar.
 
 ### Item list page
 
 Use the `octocaseItems` component to display a list of latest octocase items on a page. The component has the following properties:
 
+* **categoryFilter** - a category slug or URL parameter (:slug) to filter the items by. If left blank, all items are displayed.
 * **itemsPerPage** - how many items to display on a single page (the pagination is supported automatically). The default value is 10.
 * **categoryPage** - path to the category page. The default value is **octocase/category** - it matches the pages/octocase/category.htm file in the theme directory. This property is used in the default component partial for creating links to the octocase categories.
 * **itemPage** - path to the item details page. The default value is **octocase/item** - it matches the pages/octocase/item.htm file in the theme directory. This property is used in the default component partial for creating links to the octocase items.
@@ -18,8 +19,9 @@ Use the `octocaseItems` component to display a list of latest octocase items on 
 The octocaseItems component injects the following variables to the page where it's used:
 
 * **items** - a list of octocase items loaded from the database.
-* **categoryPage** - contains the value of the `categoryPage` component's property.
 * **itemPage** - contains the value of the `itemPage` component's property.
+* **category** - the octocase category object loaded from the database. If the category is not found, the variable value is **null**.
+* **categoryPage** - contains the value of the `categoryPage` component's property.
 * **noItemsMessage** - contains the value of the `noItemsMessage` component's property.
 
 The component supports pagination and reads the current page index from the `:page` URL parameter. The next example shows the basic component usage on the octocase home page:
@@ -32,29 +34,13 @@ The component supports pagination and reads the current page index from the `:pa
     ==
     {% component 'octocaseItems' %}
 
-The item list and the pagination are coded in the default component partial `plugins/octodevel/octocase/components/items/default.htm`. If the default markup is not suitable for your website, feel free to copy it from the default partial and replace the `{% component %}` call in the example above with the partial contents.
-
-### Category page
-
-Use the `octocaseCategory` component to display a list of a category items. The component has the following properties:
-
-* **itemsPerPage** - how many items to display on a single page (the pagination is supported automatically). The default value is 10.
-* **itemPage** - path to the item details page. The default value is **octocase/item** - it matches the pages/octocase/item.htm file in the theme directory. This property is used in the default component partial for creating links to the octocase items.
-* **noItemsMessage** - message to display in the empty item list.
-* **paramId** - the URL route parameter used for looking up the category by its slug. The default  value is **slug**.
-
-The octocaseItems component injects the following variables to the page where it's used:
-
-* **category** - the octocase category object loaded from the database. If the category is not found, the variable value is **null**.
-* **itemPage** - contains the value of the `itemPage` component's property.
-* **items** - a list of octocase items loaded from the database.
-
-The component supports pagination and reads the current page index from the `:page` URL parameter. The next example shows the basic component usage on the octocase category page:
+The next example shows the basic component usage with the category filter:
 
     title = "OctoCase Category"
     url = "/octocase/category/:slug/:page?"
 
-    [octocaseCategory category]
+    [octocaseItems]
+    categoryFilter = ":slug"
     ==
     function onEnd()
     {
@@ -68,16 +54,16 @@ The component supports pagination and reads the current page index from the `:pa
     {% else %}
         <h2>{{ category.name }}</h2>
 
-        {% component 'category' %}
+        {% component 'octocaseItems' %}
     {% endif %}
 
-The category item list and the pagination are coded in the default component partial `plugins/octodevel/octocase/components/category/default.htm`.
+The item list and the pagination are coded in the default component partial `plugins/octodevel/octocase/components/items/default.htm`. If the default markup is not suitable for your website, feel free to copy it from the default partial and replace the `{% component %}` call in the example above with the partial contents.
 
 ### Item page
 
 Use the `octocaseItem` component to display a octocase item on a page. The component has the following properties:
 
-* **paramId** - the URL route parameter used for looking up the item by its slug. The default value is **slug**.
+* **idParam** - the URL route parameter used for looking up the item by its slug. The default value is **:slug**.
 
 The component injects the following variables to the page where it's used:
 
@@ -114,8 +100,7 @@ The item details is coded in the default component partial `plugins/octodevel/oc
 Use the `octocaseCategories` component to display a list of octocase item categories with links. The component has the following properties:
 
 * **categoryPage** - path to the category page. The default value is **octocase/category** - it matches the pages/octocase/category.htm file in the theme directory. This property is used in the default component partial for creating links to the octocase categories.
-* **paramId** - the URL route parameter used for looking up the current category by its slug. The default  value is
-**slug**
+* **idParam** - the URL route parameter used for looking up the current category by its slug. The default  value is **:slug**
 * **displayEmpty** - determines if empty categories should be displayed. The default value is false.
 
 The component injects the following variables to the page where it's used:
