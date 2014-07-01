@@ -4,7 +4,7 @@ Create a products/services showcase or a sample photo gallery.
 
 ## How do this work
 
-The plugin provides several components for building the octocase item list page, category page, item details page and category list for the sidebar.
+The plugin provides several components for building the item list page, category page, item details page and category list for the sidebar.
 
 ### Item list page
 
