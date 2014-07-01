@@ -23,6 +23,7 @@ class Items extends Controller
 
         BackendMenu::setContext('OctoDevel.OctoCase', 'octocase', 'items');
         $this->addCss('/plugins/octodevel/octocase/assets/css/octodevel.octocase.css');
+        $this->addJs('/plugins/octodevel/octocase/assets/js/octodevel.octocase.js');
     }
 
     public function index()

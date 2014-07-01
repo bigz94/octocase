@@ -17,7 +17,9 @@ class Item extends Model
         'title' => 'required',
         'slug' => ['required', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:octodevel_octocase_items'],
         'content' => '',
-        'excerpt' => ''
+        'resume' => '',
+        'meta_title' => '',
+        'meta_description' => ''
     ];
 
     /**
@@ -114,15 +116,9 @@ class Item extends Model
         ;
     }
 
-    public function beforeCreate()
+    public function beforeSave()
     {
-        // Update content text
-        $content = str_replace(array('<br>', '<br/>', '<br />', '</p>'), ' ', $this->content);
-        $this->content_text = strip_tags($content);
-    }
-
-    public function beforeUpdate()
-    {
+        $this->meta_description = strip_tags($this->meta_description);
         // Update content text
         $content = str_replace(array('<br>', '<br/>', '<br />', '</p>'), ' ', $this->content);
         $this->content_text = strip_tags($content);

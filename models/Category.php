@@ -15,6 +15,7 @@ class Category extends Model
         'name' => 'required',
         'slug' => 'required|between:3,64|unique:octodevel_octocase_categories',
         'code' => 'unique:octodevel_octocase_categories',
+        'description' => ''
     ];
 
     protected $guarded = [];

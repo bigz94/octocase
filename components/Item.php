@@ -29,7 +29,10 @@ class Item extends ComponentBase
 
     public function onRun()
     {
-        $this->item = $this->page['item'] = $this->loadItem();
+        $this->item = $this->loadItem();
+        $this->page['item'] = $this->item;
+        $this->page->meta_title = isset($this->item->attributes['meta_title']) ? $this->item->attributes['meta_title'] : '';
+        $this->page->meta_description = isset($this->item->attributes['meta_description']) ? $this->item->attributes['meta_description'] : '';
     }
 
     protected function loadItem()
