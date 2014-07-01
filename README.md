@@ -12,11 +12,16 @@ Use the `octocaseItems` component to display a list of latest octocase items on 
 
 * **categoryFilter** - a category slug or URL parameter (:slug) to filter the items by. If left blank, all items are displayed.
 * **itemsPerPage** - how many items to display on a single page (the pagination is supported automatically). The default value is 10.
+* **pageParam** - how expected parameter name used by the pagination pages. The default value is **:page**.
+* **itemOrderParam** - how is the order to show the items. The default value is by published_at and updated_at.
+* **itemOrderDirParam** - how is the direction order to show the items. The default is descending.
+* **categoryFilter** - how is expected parameter name name to filter the items by. The default value is **:slug**.
 * **categoryPage** - path to the category page. The default value is **octocase/category** - it matches the pages/octocase/category.htm file in the theme directory. This property is used in the default component partial for creating links to the octocase categories.
+* **categoryPageIdParam** how expected parameter name used by category items page. The default value is **:slug**.
 * **itemPage** - path to the item details page. The default value is **octocase/item** - it matches the pages/octocase/item.htm file in the theme directory. This property is used in the default component partial for creating links to the octocase items.
 * **noItemsMessage** - message to display in the empty item list.
 
-The octocaseItems component injects the following variables to the page where it's used:
+The `octocaseItems` component injects the following variables to the page where it's used:
 
 * **items** - a list of octocase items loaded from the database.
 * **itemPage** - contains the value of the `itemPage` component's property.
@@ -99,8 +104,9 @@ The item details is coded in the default component partial `plugins/octodevel/oc
 
 Use the `octocaseCategories` component to display a list of octocase item categories with links. The component has the following properties:
 
+* **idParam** - the URL route parameter used for looking up the current category by its slug. The default value is **:slug**.
 * **categoryPage** - path to the category page. The default value is **octocase/category** - it matches the pages/octocase/category.htm file in the theme directory. This property is used in the default component partial for creating links to the octocase categories.
-* **idParam** - the URL route parameter used for looking up the current category by its slug. The default  value is **:slug**
+* **categoryPageIdParam** - how expected parameter name used by category items page. The default value is **:slug**.
 * **displayEmpty** - determines if empty categories should be displayed. The default value is false.
 
 The component injects the following variables to the page where it's used:

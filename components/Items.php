@@ -34,7 +34,7 @@ class Items extends ComponentBase
                 'title'             => 'Items per page',
                 'type'              => 'string',
                 'validationPattern' => '^[0-9]+$',
-                'validationMessage' => 'Invalid format of the items per page value',
+                'validationMessage' => 'Invalid format of the items per page value.',
                 'default'           => '10',
             ],
             'pageParam' => [
@@ -42,6 +42,18 @@ class Items extends ComponentBase
                 'description' => 'The expected parameter name used by the pagination pages.',
                 'type'        => 'string',
                 'default'     => ':page',
+            ],
+            'itemOrderParam' => [
+                'title'       => 'Order item by',
+                'description' => 'Select the order you want to show the items. Leave empty to order by published_at and updated_at.',
+                'type'        => 'dropdown',
+                'default'     => ''
+            ],
+            'itemOrderDirParam' => [
+                'title'       => 'Order item direction',
+                'description' => 'Select the order direction you want to show the items. Leave empty to order desc.',
+                'type'        => 'dropdown',
+                'default'     => ''
             ],
             'categoryFilter' => [
                 'title'       => 'Category filter',
@@ -92,12 +104,23 @@ class Items extends ComponentBase
         return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
+    public function getItemOrderParamOptions()
+    {
+        return ['' => '- default -', 'title' => 'Title', 'published_at' => 'Published at', 'created_at' => 'Created at'];
+    }
+
+    public function getItemOrderDirParamOptions()
+    {
+        return ['' => '- default -', 'asc' => 'Ascending', 'desc' => 'Descending'];
+    }
+
     public function onRun()
     {
         $this->category = $this->page['category'] = $this->loadCategory();
         $this->items = $this->page['items'] = $this->listItems();
 
         $currentPage = $this->propertyOrParam('pageParam');
+
         if ($currentPage > ($lastPage = $this->items->getLastPage()) && $currentPage > 1)
             return Redirect::to($this->controller->currentPageUrl([$this->property('pageParam') => $lastPage]));
 
@@ -120,11 +143,17 @@ class Items extends ComponentBase
 
     protected function listItems()
     {
+        $orderBy = $this->propertyOrParam('itemOrderParam');
+        $orderDir = $this->propertyOrParam('itemOrderDirParam');
+        $orderDirBase = 'desc';
+
+        $orderBase = ['published_at', 'updated_at'];
         $categories = $this->category ? $this->category->id : null;
 
         return OctoCaseItem::make()->listFrontEnd([
             'page'       => $this->propertyOrParam('pageParam'),
-            'sort'       => ['published_at', 'updated_at'],
+            'sort'       => ($orderBy ? $orderBy : $orderBase),
+            'sortDir'    => ($orderDir ? $orderDir : $orderDirBase),
             'perPage'    => $this->property('itemsPerPage'),
             'categories' => $categories
         ]);

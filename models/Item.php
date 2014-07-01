@@ -51,13 +51,14 @@ class Item extends Model
             'page' => 1,
             'perPage' => 30,
             'sort' => 'created_at',
+            'sortDir' => 'desc',
             'categories' => null,
             'search' => '',
             'published' => true
         ], $options));
 
-        $allowedSortingOptions = ['created_at', 'updated_at', 'published_at'];
-        $searchableFields = ['title', 'slug', 'excerpt', 'content'];
+        $allowedSortingOptions = ['title','created_at', 'updated_at', 'published_at'];
+        $searchableFields = ['title', 'slug', 'resume', 'content'];
 
         App::make('paginator')->setCurrentPage($page);
         $obj = $this->newQuery();
@@ -72,11 +73,11 @@ class Item extends Model
         foreach ($sort as $_sort) {
 
             $parts = explode(' ', $_sort);
-            if (count($parts) < 2) array_push($parts, 'desc');
+            if (count($parts) < 2) array_push($parts, $sortDir);
             list($sortField, $sortDirection) = $parts;
 
             if (in_array($sortField, $allowedSortingOptions))
-                $obj->orderBy($_sort, 'desc');
+                $obj->orderBy($_sort, $sortDir);
         }
 
         /*
