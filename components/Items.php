@@ -1,219 +1,172 @@
-<?php namespace OctoDevel\OctoSlider\Components;
+<?php namespace OctoDevel\OctoCase\Components;
 
-use \DB;
-use Validator;
+use App;
+use Request;
+use Redirect;
+use Cms\Classes\Page;
 use Cms\Classes\ComponentBase;
-use October\Rain\Support\ValidationException;
-use OctoDevel\OctoSlider\Models\Item as SliderItem;
+use OctoDevel\OctoCase\Models\Item as OctoCaseItem;
+use OctoDevel\OctoCase\Models\Category as OctoCaseCategory;
 
 class Items extends ComponentBase
 {
-    public $slideItem;
-    public $navigationCamera;
-    public $loaderCamera;
-    public $loaderColorCamera;
-    public $loaderBgColorCamera;
-    public $loaderOpacityCamera;
-    public $loaderPaddingCamera;
-    public $loaderStrokeCamera;
-    public $barPositionCamera;
-    public $barDirectionCamera;
-    public $hoverCamera;
-    public $thumbnailsCamera;
-    public $playPauseCamera;
-    public $paginationCamera;
-    public $captionEffectCamera;
+    public $items;
+    public $itemPage;
+    public $pageParam;
+    public $category;
+    public $categoryPage;
+    public $noItemsMessage;
+    public $itemPageIdParam;
+    public $categoryPageIdParam;
 
     public function componentDetails()
     {
         return [
-            'name'        => 'OctoSlider Item',
-            'description' => 'Display images from a selected slider item.'
+            'name'        => 'OctoCase Item List',
+            'description' => 'Displays a list of latest octocase items on the page.'
         ];
     }
 
     public function defineProperties()
     {
         return [
-            'idSlide' => [
-                'title'        => 'Slider Item',
-                'description'  => 'Choose the slider item that will display.',
-                'type'         => 'dropdown',
-                'default'      => '',
+            'itemsPerPage' => [
+                'title'             => 'Items per page',
+                'type'              => 'string',
+                'validationPattern' => '^[0-9]+$',
+                'validationMessage' => 'Invalid format of the items per page value.',
+                'default'           => '10',
             ],
-            'navigationCamera' => [
-                'title'        => 'Display navigation',
-                'description'  => 'If enabled the navigation button (prev, next and play/stop buttons) will be visible, if false they will be always hidden.',
-                'type'         => 'dropdown',
-                'default'      => 'false',
-            ],
-            'loaderCamera' => [
-                'title'       => 'Display loader',
-                'description' => 'Display a loader by slide.',
-                'type'        => 'dropdown',
-                'default'     => 'pie',
-            ],
-            'loaderColorCamera' => [
-                'title'       => 'Loader color',
-                'description' => 'Use a hexadecimal web color.',
+            'pageParam' => [
+                'title'       => 'Pagination parameter name',
+                'description' => 'The expected parameter name used by the pagination pages.',
                 'type'        => 'string',
-                'default'     => '#eeeeee',
+                'default'     => ':page',
             ],
-            'loaderBgColorCamera' => [
-                'title'       => 'Loader background color',
-                'description' => 'Use a hexadecimal web color.',
-                'type'        => 'string',
-                'default'     => '#222222',
-            ],
-            'loaderOpacityCamera' => [
-                'title'       => 'Loader opacity',
-                'description' => 'Accpted values are: 0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1',
-                'type'        => 'string',
-                'default'     => '.8',
-            ],
-            'loaderPaddingCamera' => [
-                'title'       => 'Loader padding',
-                'description' => 'How many empty pixels you want to display between the loader and its background.',
-                'type'        => 'string',
-                'default'     => '2',
-            ],
-            'loaderStrokeCamera' => [
-                'title'       => 'Loader stroke',
-                'description' => 'The thickness both of the pie loader and of the bar loader. Remember: for the pie, the loader thickness must be less than a half of the pie diameter.',
-                'type'        => 'string',
-                'default'     => '7',
-            ],
-            'barPositionCamera' => [
-                'title'       => 'Loader bar position',
-                'description' => 'Choose the loader bar position.',
+            'itemOrderParam' => [
+                'title'       => 'Order item by',
+                'description' => 'Select the order you want to show the items. Leave empty to order by published_at and updated_at.',
                 'type'        => 'dropdown',
-                'default'     => 'bottom',
+                'default'     => ''
             ],
-            'barDirectionCamera' => [
-                'title'       => 'Loader bar direction',
-                'description' => 'Choose the loader bar direction if your "Display loader" choice was "Bar".',
+            'itemOrderDirParam' => [
+                'title'       => 'Order item direction',
+                'description' => 'Select the order direction you want to show the items. Leave empty to order desc.',
                 'type'        => 'dropdown',
-                'default'     => 'leftToRight',
+                'default'     => ''
             ],
-            'hoverCamera' => [
-                'title'       => 'Pause on hover',
-                'description' => 'Pause on state hover. Not available for mobile devices.',
-                'type'        => 'dropdown',
-                'default'     => 'true'
-            ],
-            'thumbnailsCamera' => [
-                'title'       => 'Display thumbnails',
-                'description' => 'Display thumbnails from the slider items image.',
-                'type'        => 'dropdown',
-                'default'     => 'true'
-            ],
-            'playPauseCamera' => [
-                'title'       => 'Display play/pause buttons',
+            'categoryFilter' => [
+                'title'       => 'Category filter',
                 'description' => 'Enter a category slug or URL parameter to filter the items by. Leave empty to show all items.',
-                'type'        => 'dropdown',
-                'default'     => 'false'
+                'type'        => 'string',
+                'default'     => ':slug'
             ],
-            'paginationCamera' => [
-                'title'       => 'Display pagination',
-                'description' => 'Display the slider pagination.',
+            'categoryPage' => [
+                'title'       => 'Category page',
+                'description' => 'Name of the category page file for the "Posted into" category links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
-                'default'     => 'true'
+                'default'     => 'octocase/category'
             ],
-            'captionEffectCamera' => [
-                'title'       => 'Image caption effect',
-                'description' => 'Choose what effect the image captions will have.',
+            'categoryPageIdParam' => [
+                'title'       => 'Category page param name',
+                'description' => 'The expected parameter name used when creating links to the category page.',
+                'type'        => 'string',
+                'default'     => ':slug',
+            ],
+            'itemPage' => [
+                'title'       => 'Item page',
+                'description' => 'Name of the octocase item page file for the "Learn more" links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
-                'default'     => 'fadeFromBottom',
-            ]
+                'default'     => 'octocase/item'
+            ],
+            'itemPageIdParam' => [
+                'title'       => 'Item page param name',
+                'description' => 'The expected parameter name used when creating links to the item page.',
+                'type'        => 'string',
+                'default'     => ':slug',
+            ],
+            'noItemsMessage' => [
+                'title'        => 'No items message',
+                'description'  => 'Message to display in the octocase item list in case if there are no items. This property is used by the default component partial.',
+                'type'         => 'string',
+                'default'      => 'No items found'
+            ],
         ];
     }
 
-    public function getIdSlideOptions()
+    public function getCategoryPageOptions()
     {
-        $slides = SliderItem::all();
-
-        $array_dropdown = ['0'=>'- select one - '];
-
-        foreach ($slides as $slide)
-        {
-            $array_dropdown[$slide->id] = $slide->title;
-        }
-
-        return $array_dropdown;
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
-    public function getNavigationCameraOptions()
+    public function getItemPageOptions()
     {
-        return ['false' => 'No', 'true' => 'Yes'];
+        return Page::sortBy('baseFileName')->lists('baseFileName', 'baseFileName');
     }
 
-    public function getLoaderCameraOptions()
+    public function getItemOrderParamOptions()
     {
-        return ['pie' => 'Pie', 'bar' => 'Bar', 'none' => 'None'];
+        return ['' => '- default -', 'title' => 'Title', 'published_at' => 'Published at', 'created_at' => 'Created at'];
     }
 
-    public function getHoverCameraOptions()
+    public function getItemOrderDirParamOptions()
     {
-        return ['false' => 'No', 'true' => 'Yes'];
-    }
-
-    public function getThumbnailsCameraOptions()
-    {
-        return ['false' => 'No', 'true' => 'Yes'];
-    }
-
-    public function getPlayPauseCameraOptions()
-    {
-        return ['false' => 'No', 'true' => 'Yes'];
-    }
-
-    public function getPaginationCameraOptions()
-    {
-        return ['false' => 'No', 'true' => 'Yes'];
-    }
-
-    public function getBarDirectionCameraOptions()
-    {
-        return ['leftToRight' => 'Left to right', 'rightToLeft' => 'Right to left', 'topToBottom' => 'Top to bottom', 'bottomToTop' => 'Bottom to top'];
-    }
-
-    public function getBarPositionCameraOptions()
-    {
-        return ['left' => 'Left', 'right' => 'Right', 'top' => 'Top', 'bottom' => 'Bottom'];
-    }
-
-    public function getCaptionEffectCameraOptions()
-    {
-        return ['moveFromLeft' => 'Move from left', 'moveFomRight' => 'Move from right', 'moveFromTop' => 'Move from top', 'moveFromBottom' => 'Move from bottom', 'fadeIn' => 'Fade in', 'fadeFromLeft' => 'Fade from left', 'fadeFromRight' => 'Fade from right', 'fadeFromTop' => 'Fade from top', 'fadeFromBottom' => 'Fade from bottom'];
+        return ['' => '- default -', 'asc' => 'Ascending', 'desc' => 'Descending'];
     }
 
     public function onRun()
     {
-        // Getting register
-        $sliderItem = new SliderItem();
-        $item = $sliderItem->where('id', '=', $this->propertyOrParam('idSlide'))->first();
-        $this->slideItem = $this->page['slideItem'] = $item;
+        $this->category = $this->page['category'] = $this->loadCategory();
+        $this->items = $this->page['items'] = $this->listItems();
 
-        // Setting parameters
-        $this->navigationCamera = $this->page['navigationCamera'] = $this->propertyOrParam('navigationCamera');
-        $this->loaderCamera = $this->page['loaderCamera'] = $this->propertyOrParam('loaderCamera');
-        $this->loaderColorCamera = $this->page['loaderColorCamera'] = $this->propertyOrParam('loaderColorCamera');
-        $this->loaderBgColorCamera = $this->page['loaderBgColorCamera'] = $this->propertyOrParam('loaderBgColorCamera');
-        $this->loaderOpacityCamera = $this->page['loaderOpacityCamera'] = $this->propertyOrParam('loaderOpacityCamera');
-        $this->loaderPaddingCamera = $this->page['loaderPaddingCamera'] = $this->propertyOrParam('loaderPaddingCamera');
-        $this->loaderStrokeCamera = $this->page['loaderStrokeCamera'] = $this->propertyOrParam('loaderStrokeCamera');
-        $this->barPositionCamera = $this->page['barPositionCamera'] = $this->propertyOrParam('barPositionCamera');
-        $this->barDirectionCamera = $this->page['barDirectionCamera'] = $this->propertyOrParam('barDirectionCamera');
-        $this->hoverCamera = $this->page['hoverCamera'] = $this->propertyOrParam('hoverCamera');
-        $this->thumbnailsCamera = $this->page['thumbnailsCamera'] = $this->propertyOrParam('thumbnailsCamera');
-        $this->playPauseCamera = $this->page['playPauseCamera'] = $this->propertyOrParam('playPauseCamera');
-        $this->paginationCamera = $this->page['paginationCamera'] = $this->propertyOrParam('paginationCamera');
-        $this->captionEffectCamera = $this->page['captionEffectCamera'] = $this->propertyOrParam('captionEffectCamera');
+        $currentPage = $this->propertyOrParam('pageParam');
 
-        // Add vendors
-        $this->addCss('assets/vendor/pixedelic/camera/css/camera.css');
-        $this->addJs('assets/vendor/pixedelic/camera/scripts/jquery.mobile.customized.min.js');
-        $this->addJs('assets/vendor/pixedelic/camera/scripts/jquery.easing.1.3.js');
-        $this->addJs('assets/vendor/pixedelic/camera/scripts/camera.min.js');
+        if ($currentPage > ($lastPage = $this->items->getLastPage()) && $currentPage > 1)
+            return Redirect::to($this->controller->currentPageUrl([$this->property('pageParam') => $lastPage]));
+
+        $this->prepareVars();
+    }
+
+    protected function prepareVars()
+    {
+        $this->pageParam = $this->page['pageParam'] = $this->property('pageParam');
+        $this->noItemsMessage = $this->page['noItemsMessage'] = $this->property('noItemsMessage');
+
+        /*
+         * Page links
+         */
+        $this->itemPage = $this->page['itemPage'] = $this->property('itemPage');
+        $this->itemPageIdParam = $this->page['itemPageIdParam'] = $this->property('itemPageIdParam');
+        $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
+        $this->categoryPageIdParam = $this->page['categoryPageIdParam'] = $this->property('categoryPageIdParam');
+    }
+
+    protected function listItems()
+    {
+        $orderBy = $this->propertyOrParam('itemOrderParam');
+        $orderDir = $this->propertyOrParam('itemOrderDirParam');
+        $orderDirBase = 'desc';
+
+        $orderBase = ['published_at', 'updated_at'];
+        $categories = $this->category ? $this->category->id : null;
+
+        return OctoCaseItem::make()->listFrontEnd([
+            'page'       => $this->propertyOrParam('pageParam'),
+            'sort'       => ($orderBy ? $orderBy : $orderBase),
+            'sortDir'    => ($orderDir ? $orderDir : $orderDirBase),
+            'perPage'    => $this->property('itemsPerPage'),
+            'categories' => $categories
+        ]);
+    }
+
+    public function loadCategory()
+    {
+        if (!$categoryId = $this->propertyOrParam('categoryFilter'))
+            return null;
+
+        if (!$category = OctoCaseCategory::whereSlug($categoryId)->first())
+            return null;
+
+        return $category;
     }
 }

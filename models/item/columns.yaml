@@ -4,14 +4,24 @@
 
 columns:
 
-    title:
-        label: Title
-        searchable: true
+  title:
+    label: Title
+    searchable: true
 
-    created_at:
-        label: Created
-        type: datetime
+  categories:
+    label: Categories
+    relation: categories
+    select: @name
+    searchable: true
 
-    updated_at:
-        label: Updated
-        type: datetime
+  created_at:
+    label: Created
+    type: datetime
+
+  updated_at:
+    label: Updated
+    type: datetime
+
+  published_at:
+    label: Published
+    type: datetime

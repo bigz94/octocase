@@ -24,7 +24,7 @@ recordsPerPage: 15
 defaultSort: name
 
 # Display checkboxes next to each record
-# showCheckboxes: yes
+showCheckboxes: true
 
 # Toolbar widget configuration
 toolbar:

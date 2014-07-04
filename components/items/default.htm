@@ -1,34 +1,50 @@
-<script>
-    $(function(){
+<div class="row">
+    <div class="col-md-12">
+        <div class="item-list">
+            {% for item in items %}
+                <div class="col-md-4">
+                    <h3><a href="{{ itemPage|page({ (itemPageIdParam): item.slug}) }}">{{ item.title }}</a></h3>
 
-        $('#octoSlider').camera({
-            navigation: {{ navigationCamera }},
-            loader: '{{ loaderCamera }}',
-            loaderColor: '{{ loaderColorCamera }}',
-            loaderBgColor: '{{ loaderBgColorCamera }}',
-            loaderOpacity: {{ loaderOpacityCamera }},
-            loaderPadding: {{ loaderPaddingCamera }},
-            loaderStroke: {{ loaderStrokeCamera }},
-            barPosition: '{{ barPositionCamera }}',
-            barDirection: '{{ barDirectionCamera }}',
-            hover: {{ hoverCamera }},
-            thumbnails: {{ thumbnailsCamera }},
-            playPause: {{ playPauseCamera }},
-            pagination: {{ paginationCamera }}
-        });
-
-    });
-</script>
-{% if slideItem %}
-    <div class="camera_wrap" id="octoSlider">
-        {% for image in slideItem.images %}
-        <div data-thumb="{{ image.thumb(100,100)|app }}" data-src="{{ image.path|app }}">
-            {% if image.description %}
-            <div class="camera_caption {{ captionEffectCamera }}">
-                {{ image.description|raw }}
-            </div>
-            {% endif %}
+                    <div class="row">
+                        {% if item.images %}
+                        <div class="col-md-12">
+                            <img src="{{ item.images.0.path|app }}" class="img-responsive">
+                        </div>
+                        {% endif %}
+                        <div class="col-md-12">
+                            <div class="content">
+                            {% if item.resume %}
+                                {{ item.resume|raw }}
+                            {% else %}
+                                {{ item.content_text|raw }}
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <li class="no-data">{{ noItemsMessage }}</li>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-{% endif %}
+    <div class="clearfix"></div>
+    <div class="col-md-12">
+        {% if items.getLastPage > 1 %}
+            <ul class="pagination">
+                {% if items.getCurrentPage > 1 %}
+                    <li><a href="{{ this.page.baseFileName|page({ (pageParam): (items.getCurrentPage-1) }) }}">&larr; Prev</a></li>
+                {% endif %}
+
+                {% for page in 1..items.getLastPage %}
+                    <li class="{{ items.getCurrentPage == page ? 'active' : null }}">
+                        <a href="{{ this.page.baseFileName|page({ (pageParam): page }) }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if items.getLastPage > items.getCurrentPage %}
+                    <li><a href="{{ this.page.baseFileName|page({ (pageParam): (items.getCurrentPage+1) }) }}">Next &rarr;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
