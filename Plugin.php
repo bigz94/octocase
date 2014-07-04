@@ -1,4 +1,4 @@
-<?php namespace OctoDevel\OctoCase;
+<?php namespace OctoDevel\OctoSlider;
 
 use Backend;
 use Controller;
@@ -10,57 +10,38 @@ class Plugin extends PluginBase
     public function pluginDetails()
     {
         return [
-            'name'        => 'Octo Case',
-            'description' => 'Create a products/services showcase or a sample photo gallery.',
+            'name'        => 'Octo Slider',
+            'description' => 'Create slider in your website using Camera Slider jQuery Plugin.',
             'author'      => 'Octo Devel',
-            'icon'        => 'icon-cubes'
+            'icon'        => 'icon-picture-o'
         ];
     }
 
     public function registerComponents()
     {
         return [
-            'OctoDevel\OctoCase\Components\Item' => 'octocaseItem',
-            'OctoDevel\OctoCase\Components\Items' => 'octocaseItems',
-            'OctoDevel\OctoCase\Components\Categories' => 'octocaseCategories',
+            'OctoDevel\OctoSlider\Components\Items' => 'octosliderItem',
         ];
     }
 
     public function registerNavigation()
     {
         return [
-            'octocase' => [
-                'label'       => 'Octo Case',
-                'url'         => Backend::url('octodevel/octocase/items'),
-                'icon'        => 'icon-cubes',
-                'permissions' => ['octocase.*'],
+            'octoslider' => [
+                'label'       => 'Octo Slider',
+                'url'         => Backend::url('octodevel/octoslider/items'),
+                'icon'        => 'icon-picture-o',
+                'permissions' => ['octoslider.*'],
                 'order'       => 500,
 
                 'sideMenu' => [
                     'items' => [
-                        'label'       => 'Items',
+                        'label'       => 'Slide Items',
                         'icon'        => 'icon-th-large',
-                        'url'         => Backend::url('octodevel/octocase/items'),
-                        'permissions' => ['octocase.access_items'],
-                    ],
-                    'categories' => [
-                        'label'       => 'Categories',
-                        'icon'        => 'icon-list-ul',
-                        'url'         => Backend::url('octodevel/octocase/categories'),
-                        'permissions' => ['octocase.access_categories'],
-                    ],
+                        'url'         => Backend::url('octodevel/octoslider/items'),
+                        'permissions' => ['octoslider.access_items'],
+                    ]
                 ]
-
-            ]
-        ];
-    }
-
-    public function registerFormWidgets()
-    {
-        return [
-            'OctoDevel\OctoCase\FormWidgets\Trumbowyg' => [
-                'label' => 'Trumbowyg',
-                'alias' => 'trumbowyg'
             ]
         ];
     }

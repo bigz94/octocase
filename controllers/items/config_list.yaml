@@ -3,16 +3,16 @@
 # ===================================
 
 # Model List Column configuration
-list: @/plugins/octodevel/octocase/models/item/columns.yaml
+list: @/plugins/octodevel/octoslider/models/item/columns.yaml
 
 # Model Class name
-modelClass: OctoDevel\OctoCase\Models\Item
+modelClass: OctoDevel\OctoSlider\Models\Item
 
 # List Title
-title: Manage OctoCase Items
+title: Manage OctoSlider Items
 
 # Link URL for each record
-recordUrl: octodevel/octocase/items/update/:id
+recordUrl: octodevel/octoslider/items/update/:id
 
 # Message to display if the list is empty
 noRecordsMessage: backend::lang.list.no_records
@@ -21,10 +21,10 @@ noRecordsMessage: backend::lang.list.no_records
 recordsPerPage: 15
 
 # Sort by
-defaultSort: published_at
+defaultSort: title
 
 # Display checkboxes next to each record
-# showCheckboxes: yes
+showCheckboxes: true
 
 # Toolbar widget configuration
 toolbar:

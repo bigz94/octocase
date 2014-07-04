@@ -1,23 +1,15 @@
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li><a href="<?= Backend::url('octodevel/octoslider/items') ?>">OctoSlider Items</a></li>
+        <li><?= e($this->pageTitle) ?></li>
+    </ul>
+<?php Block::endPut() ?>
+
 <?php if (!$this->fatalError): ?>
 
-    <div class="layout fancy-layout">
-        <?= Form::open([
-            'class' => 'layout',
-            'data-change-monitor' => 'true',
-            'data-window-close-confirm' => 'The item is not saved.',
-            'id' => 'item-form'
-        ]) ?>
-            <?= $this->formRender() ?>
+    <?= Form::open(['class'=>'layout-item stretch layout-column']) ?>
 
-        <?= Form::close() ?>
-    </div>
-
-    <?php /*
-
-    <?php Block::put('form-contents') ?>
-
-        <?= $this->formRenderOutsideFields() ?>
-        <?= $this->formRenderPrimaryTabs() ?>
+        <?= $this->formRender() ?>
 
         <div class="form-buttons layout-item fix">
             <div class="loading-indicator-container">
@@ -41,9 +33,6 @@
                     class="btn btn-default">
                     Save and Close
                 </button>
-                <span class="btn-text">
-                    or <a href="<?= Backend::url('octodevel/octocase/items') ?>">Cancel</a>
-                </span>
                 <button
                     type="button"
                     class="oc-icon-trash-o btn-icon danger pull-right"
@@ -51,29 +40,13 @@
                     data-load-indicator="Deleting Item..."
                     data-request-confirm="Do you really want to delete this item?">
                 </button>
+
+                <span class="btn-text">or <a href="<?= Backend::url('octodevel/octoslider/items') ?>">Cancel</a></span>
             </div>
         </div>
-
-    <?php Block::endPut() ?>
-
-    <?php Block::put('form-sidebar') ?>
-        <div class="hide-tabs"><?= $this->formRenderSecondaryTabs() ?></div>
-    <?php Block::endPut() ?>
-
-    <?php Block::put('body') ?>
-        <?= Form::open(['class'=>'layout stretch']) ?>
-            <?= $this->makeLayout('form-with-sidebar') ?>
-        <?= Form::close() ?>
-    <?php Block::endPut() ?>
-
-    */ ?>
+    <?= Form::close() ?>
 
 <?php else: ?>
-    <div class="padded-container">
-        <div class="control-breadcrumb">
-            <?= Block::placeholder('breadcrumb') ?>
-        </div>
-        <p class="flash-message static error"><?= e($this->fatalError) ?></p>
-        <p><a href="<?= Backend::url('octodevel/octocase/items') ?>" class="btn btn-default">Return to items list</a></p>
-    </div>
+    <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+    <p><a href="<?= Backend::url('octodevel/octoslider/items') ?>" class="btn btn-default">Return to the item list</a></p>
 <?php endif ?>
