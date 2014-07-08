@@ -6,3 +6,5 @@
 1.0.1:
     - Fixed missing model Category.php
     - Updated some new functions
+1.0.2:
+    - Fixed images path with app
