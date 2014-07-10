@@ -50,19 +50,7 @@ class Plugin extends PluginBase
                         'permissions' => ['octocase.access_categories'],
                     ],
                 ]
-
             ]
         ];
     }
-
-    public function registerFormWidgets()
-    {
-        return [
-            'OctoDevel\OctoCase\FormWidgets\Trumbowyg' => [
-                'label' => 'Trumbowyg',
-                'alias' => 'trumbowyg'
-            ]
-        ];
-    }
-
 }

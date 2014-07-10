@@ -38,7 +38,9 @@ secondaryTabs:
     content:
       tab: Edit
       stretch: true
-      type: OctoDevel\OctoCase\FormWidgets\Trumbowyg
+      type: richeditor
+      size: giant
+      language: html
 
     categories:
       tab: Categories

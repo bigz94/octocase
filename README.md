@@ -72,14 +72,14 @@ Use the `octocaseItem` component to display a octocase item on a page. The compo
 
 The component injects the following variables to the page where it's used:
 
-* **octocaseItem** - the octocase item object loaded from the database. If the item is not found, the variable value is **null**.
+* **item** - the octocase item object loaded from the database. If the item is not found, the variable value is **null**.
 
 The next example shows the basic component usage on the octocase page:
 
     title = "OctoCase Item"
     url = "/octocase/item/:slug"
 
-    [octocaseItem item]
+    [octocaseItem]
     ==
     <?php
     function onEnd()
@@ -93,9 +93,9 @@ The next example shows the basic component usage on the octocase page:
     {% if not octocaseItem %}
         <h2>Item not found</h2>
     {% else %}
-        <h2>{{ octocaseItem.title }}</h2>
+        <h2>{{ item.title }}</h2>
 
-        {% component 'item' %}
+        {% component 'octocaseItem' %}
     {% endif %}
 
 The item details is coded in the default component partial `plugins/octodevel/octocase/components/item/default.htm`.
