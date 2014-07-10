@@ -10,3 +10,5 @@
     - Fixed images path with app
 1.0.3:
     - Default cms richeditor implemented
+1.0.4:
+    - Fixed issue on richeditor
