@@ -8,12 +8,14 @@ class Category extends Model
 {
     public $table = 'octodevel_octocase_categories';
 
+    use \October\Rain\Database\Traits\Validation;
+
     /*
      * Validation
      */
     public $rules = [
         'name' => 'required',
-        'slug' => 'required|between:3,64|unique:octodevel_octocase_categories',
+        'slug' => ['required', 'between:3,64', 'regex:/^[a-z0-9\/\:_\-\*\[\]\+\?\|]*$/i', 'unique:octodevel_octocase_categories'],
         'code' => 'unique:octodevel_octocase_categories',
         'description' => ''
     ];

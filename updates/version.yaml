@@ -14,3 +14,5 @@
     - Fixed issue on richeditor
 1.0.5:
     - Fixed issue while installing plugin
+1.0.6:
+    - Fixed validation exceptions

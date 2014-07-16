@@ -3,11 +3,11 @@
 use App;
 use Str;
 use Model;
-use October\Rain\Support\Markdown;
-use October\Rain\Support\ValidationException;
 
 class Item extends Model
 {
+    use \October\Rain\Database\Traits\Validation;
+
     public $table = 'octodevel_octocase_items';
 
     /*
