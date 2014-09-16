@@ -16,3 +16,5 @@
     - Fixed issue while installing plugin
 1.0.6:
     - Fixed validation exceptions
+1.0.7:
+    - Fixed bugs with web root path
