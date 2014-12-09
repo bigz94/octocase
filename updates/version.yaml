@@ -18,3 +18,5 @@
     - Fixed validation exceptions
 1.0.7:
     - Fixed bugs with web root path
+1.0.8:
+    - Fixed previous bugs

@@ -36,60 +36,70 @@ class Items extends ComponentBase
                 'validationPattern' => '^[0-9]+$',
                 'validationMessage' => 'Invalid format of the items per page value.',
                 'default'           => '10',
+                'showExternalParameter' => false,
             ],
             'pageParam' => [
                 'title'       => 'Pagination parameter name',
                 'description' => 'The expected parameter name used by the pagination pages.',
                 'type'        => 'string',
                 'default'     => ':page',
+                'showExternalParameter' => false,
             ],
             'itemOrderParam' => [
                 'title'       => 'Order item by',
                 'description' => 'Select the order you want to show the items. Leave empty to order by published_at and updated_at.',
                 'type'        => 'dropdown',
-                'default'     => ''
+                'default'     => '',
+                'showExternalParameter' => false,
             ],
             'itemOrderDirParam' => [
                 'title'       => 'Order item direction',
                 'description' => 'Select the order direction you want to show the items. Leave empty to order desc.',
                 'type'        => 'dropdown',
-                'default'     => ''
+                'default'     => '',
+                'showExternalParameter' => false,
             ],
             'categoryFilter' => [
                 'title'       => 'Category filter',
                 'description' => 'Enter a category slug or URL parameter to filter the items by. Leave empty to show all items.',
                 'type'        => 'string',
-                'default'     => ':slug'
+                'default'     => ':slug',
+                'showExternalParameter' => false,
             ],
             'categoryPage' => [
                 'title'       => 'Category page',
                 'description' => 'Name of the category page file for the "Posted into" category links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
-                'default'     => 'octocase/category'
+                'default'     => 'octocase/category',
+                'showExternalParameter' => false,
             ],
             'categoryPageIdParam' => [
                 'title'       => 'Category page param name',
                 'description' => 'The expected parameter name used when creating links to the category page.',
                 'type'        => 'string',
                 'default'     => ':slug',
+                'showExternalParameter' => false,
             ],
             'itemPage' => [
                 'title'       => 'Item page',
                 'description' => 'Name of the octocase item page file for the "Learn more" links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
-                'default'     => 'octocase/item'
+                'default'     => 'octocase/item',
+                'showExternalParameter' => false,
             ],
             'itemPageIdParam' => [
                 'title'       => 'Item page param name',
                 'description' => 'The expected parameter name used when creating links to the item page.',
                 'type'        => 'string',
                 'default'     => ':slug',
+                'showExternalParameter' => false,
             ],
             'noItemsMessage' => [
                 'title'        => 'No items message',
                 'description'  => 'Message to display in the octocase item list in case if there are no items. This property is used by the default component partial.',
                 'type'         => 'string',
-                'default'      => 'No items found'
+                'default'      => 'No items found',
+                'showExternalParameter' => false,
             ],
         ];
     }
@@ -119,7 +129,7 @@ class Items extends ComponentBase
         $this->category = $this->page['category'] = $this->loadCategory();
         $this->items = $this->page['items'] = $this->listItems();
 
-        $currentPage = $this->propertyOrParam('pageParam');
+        $currentPage = $this->property('pageParam');
 
         if ($currentPage > ($lastPage = $this->items->getLastPage()) && $currentPage > 1)
             return Redirect::to($this->controller->currentPageUrl([$this->property('pageParam') => $lastPage]));
@@ -143,15 +153,15 @@ class Items extends ComponentBase
 
     protected function listItems()
     {
-        $orderBy = $this->propertyOrParam('itemOrderParam');
-        $orderDir = $this->propertyOrParam('itemOrderDirParam');
+        $orderBy = $this->property('itemOrderParam');
+        $orderDir = $this->property('itemOrderDirParam');
         $orderDirBase = 'desc';
 
         $orderBase = ['published_at', 'updated_at'];
         $categories = $this->category ? $this->category->id : null;
 
         return OctoCaseItem::make()->listFrontEnd([
-            'page'       => $this->propertyOrParam('pageParam'),
+            'page'       => $this->property('pageParam'),
             'sort'       => ($orderBy ? $orderBy : $orderBase),
             'sortDir'    => ($orderDir ? $orderDir : $orderDirBase),
             'perPage'    => $this->property('itemsPerPage'),
@@ -161,7 +171,7 @@ class Items extends ComponentBase
 
     public function loadCategory()
     {
-        if (!$categoryId = $this->propertyOrParam('categoryFilter'))
+        if (!$categoryId = $this->property('categoryFilter'))
             return null;
 
         if (!$category = OctoCaseCategory::whereSlug($categoryId)->first())

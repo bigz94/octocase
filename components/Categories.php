@@ -29,25 +29,29 @@ class Categories extends ComponentBase
                 'title'       => 'Slug param name',
                 'description' => 'The URL route parameter used for looking up the current category by its slug. This property is used by the default component partial for marking the currently active category.',
                 'default'     => ':slug',
-                'type'        => 'string'
+                'type'        => 'string',
+                'showExternalParameter' => false,
             ],
             'categoryPage' => [
                 'title'       => 'Category page',
                 'description' => 'Name of the category page file for the category links. This property is used by the default component partial.',
                 'type'        => 'dropdown',
-                'default'     => 'octocase/category'
+                'default'     => 'octocase/category',
+                'showExternalParameter' => false,
             ],
             'categoryPageIdParam' => [
                 'title'       => 'Category page param name',
                 'description' => 'The expected parameter name used when creating links to the category page.',
                 'type'        => 'string',
                 'default'     => ':slug',
+                'showExternalParameter' => false,
             ],
             'displayEmpty' => [
                 'title'       => 'Display empty categories',
                 'description' => 'Show categories that do not have any posts.',
                 'type'        => 'checkbox',
-                'default'     => 0
+                'default'     => 0,
+                'showExternalParameter' => false,
             ],
         ];
     }
@@ -62,7 +66,7 @@ class Categories extends ComponentBase
         $this->categories = $this->page['categories'] = $this->loadCategories();
         $this->categoryPage = $this->page['categoryPage'] = $this->property('categoryPage');
         $this->categoryPageIdParam = $this->page['categoryPageIdParam'] = $this->property('categoryPageIdParam');
-        $this->currentCategorySlug = $this->page['currentCategorySlug'] = $this->propertyOrParam('idParam');
+        $this->currentCategorySlug = $this->page['currentCategorySlug'] = $this->property('idParam');
     }
 
     protected function loadCategories()

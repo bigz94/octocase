@@ -22,7 +22,8 @@ class Item extends ComponentBase
                 'title'       => 'Slug param name',
                 'description' => 'The URL route parameter used for looking up the item by its slug.',
                 'default'     => ':slug',
-                'type'        => 'string'
+                'type'        => 'string',
+                'showExternalParameter' => false,
             ],
         ];
     }
@@ -37,7 +38,7 @@ class Item extends ComponentBase
 
     protected function loadItem()
     {
-        $slug = $this->propertyOrParam('idParam');
+        $slug = $this->property('idParam');
         return OctoCaseItem::isPublished()->where('slug', '=', $slug)->first();
     }
 }
